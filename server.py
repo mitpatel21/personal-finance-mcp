@@ -553,8 +553,16 @@ search_transactions = mcp.tool(
 
 
 if __name__ == "__main__":
+    # Load .env from this folder so `python server.py` works locally.
+    from dotenv import load_dotenv
+
+    load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env"))
+
+    # Default to localhost only: the endpoint has no auth, so binding to
+    # 0.0.0.0 would expose every linked account to anyone on the same network.
+    # Set HOST=0.0.0.0 only behind an auth gate (e.g. in Docker / a tunnel).
     mcp.run(
         transport="http",
-        host="0.0.0.0",
+        host=os.getenv("HOST", "127.0.0.1"),
         port=int(os.getenv("PORT", "8000")),
     )

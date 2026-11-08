@@ -48,6 +48,8 @@ All 9 tools are read-only. Each returns `{<data>: [...], "warnings": [...]}` so 
 
 ## Quickstart
 
+> **On a Mac?** See [mac/README.md](mac/README.md) for a localhost-only setup that runs in the background at login.
+
 Requires Python 3.11+, a Plaid account (free Trial plan), and an MCP client.
 
 ### 1. Plaid setup
