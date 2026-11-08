@@ -48,6 +48,10 @@ All 9 tools are read-only. Each returns `{<data>: [...], "warnings": [...]}` so 
 
 ## Quickstart
 
+> **On a Mac?** See [mac/README.md](mac/README.md) for a localhost-only setup that runs in the background at login.
+>
+> **Want it on claude.ai web and mobile?** See [docs/RENDER.md](docs/RENDER.md) to deploy on Render behind GitHub login locked to your account.
+
 Requires Python 3.11+, a Plaid account (free Trial plan), and an MCP client.
 
 ### 1. Plaid setup

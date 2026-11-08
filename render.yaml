@@ -1,0 +1,44 @@
+# Render Blueprint. Setup steps: docs/RENDER.md
+#
+# Rename the service below to something unique before deploying: your URL will
+# be https://<name>.onrender.com, and the GitHub OAuth app must point at it.
+services:
+  - type: web
+    name: mitpatel21-finance-mcp
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    # Starter: always on, and supports the disk below. On the free plan the
+    # service sleeps after 15 idle minutes and loses login state on every
+    # restart (Claude must reconnect). To use free anyway: plan: free, and
+    # delete the disk block.
+    plan: starter
+    healthCheckPath: /health
+    autoDeploy: true
+    disk:
+      name: oauth-state
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      # Keeps OAuth client registrations across deploys and restarts.
+      - key: FASTMCP_HOME
+        value: /var/data/fastmcp
+      # Blocks link_helper.py from running in the deployment.
+      - key: HORIZON
+        value: "1"
+      # The only GitHub account(s) allowed in. Comma-separated.
+      - key: ALLOWED_GITHUB_USERS
+        value: mitpatel21
+      - key: GITHUB_CLIENT_ID
+        sync: false
+      - key: GITHUB_CLIENT_SECRET
+        sync: false
+      - key: JWT_SIGNING_KEY
+        generateValue: true
+      - key: PLAID_CLIENT_ID
+        sync: false
+      - key: PLAID_SECRET
+        sync: false
+      - key: PLAID_ENV
+        value: production
+      # Bank tokens (PLAID_TOKEN_CHASE=..., one per bank) are added in the
+      # dashboard after linking each bank locally. See docs/RENDER.md.

@@ -26,7 +26,24 @@ from plaid_client import (
     shape_transaction,
 )
 
-mcp = FastMCP("personal-finance-mcp")
+from dotenv import load_dotenv
+from starlette.requests import Request
+from starlette.responses import PlainTextResponse
+
+from auth import auth_from_env
+
+# Load .env from this folder for local runs (never overrides real env vars,
+# so hosted deployments use the platform's settings).
+load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env"))
+
+# None locally; GitHub OAuth + allowlist when GITHUB_CLIENT_ID is set.
+mcp = FastMCP("personal-finance-mcp", auth=auth_from_env())
+
+
+@mcp.custom_route("/health", methods=["GET"])
+async def health(_: Request) -> PlainTextResponse:
+    """Unauthenticated liveness check for the host. Exposes no data."""
+    return PlainTextResponse("ok")
 
 
 def _warning_from_health(h: ItemHealth) -> dict:
@@ -553,8 +570,17 @@ search_transactions = mcp.tool(
 
 
 if __name__ == "__main__":
+    # Default to localhost only. Without auth, binding to 0.0.0.0 would expose
+    # every linked account to anyone who can reach this machine. Hosted
+    # deployments set HOST=0.0.0.0 and must also configure auth (see auth.py).
+    host = os.getenv("HOST", "127.0.0.1")
+    if mcp.auth is None and host not in ("127.0.0.1", "localhost", "::1"):
+        print(
+            f"WARNING: listening on {host} with NO authentication. "
+            "Only do this inside a container whose port is published to 127.0.0.1."
+        )
     mcp.run(
         transport="http",
-        host="0.0.0.0",
+        host=host,
         port=int(os.getenv("PORT", "8000")),
     )
