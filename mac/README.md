@@ -78,11 +78,9 @@ Node.js, `brew install node`), then restart Claude Desktop:
 
 Ask "list my accounts" to confirm it works.
 
-**claude.ai on the web or phone:** custom connectors are reached from
-Anthropic's servers, so they can't see `127.0.0.1` on your Mac. Using them would
-mean exposing the server publicly behind real authentication (OAuth, Cloudflare
-Access, etc.). Don't use a plain public tunnel: anyone with the URL could read
-every linked account.
+**claude.ai on the web or phone:** these connect from Anthropic's servers,
+so they can't reach `127.0.0.1` on your Mac. For that, deploy to Render
+instead: see [docs/RENDER.md](../docs/RENDER.md).
 
 ## Security notes
 
